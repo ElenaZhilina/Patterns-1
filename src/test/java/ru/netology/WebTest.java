@@ -19,20 +19,22 @@ public class WebTest {
 
     @Test
     public void cardTest() {
+
         open("http://localhost:9999");
         $("[data-test-id='city'] input").setValue("Москва");
 
         $("[data-test-id='date'] input").sendKeys(Keys.SHIFT, Keys.HOME, Keys.DELETE);
         $("[data-test-id='date'] input").sendKeys(futureDate.format(formatter));
 
-        $("[data-test-id='name']").setValue("Елена");
-        $("[data-test-id='phone']").setValue("+77772100609");
-        $("data-test-id=agreement]").click();
+        $("[data-test-id='name'] input").setValue("Елена");
+        $("[data-test-id='phone'] input").setValue("+77772100609");
+        $("[data-test-id=agreement]").click();
         $("button").click();
+        $$("button").find(exactText("Забронировать")).shouldBe(Condition.visible, Duration.ofSeconds(15));
 
-        $(".notification__title")
-                .shouldBe(Condition.visible, Duration.ofSeconds(15))
-                .shouldHave(exactText("Успешно!"));
+        $("[data-test-id=notification].notification__content")
+               .shouldHave(exactText("Встреча успешно забронирована на " + futureDate.format(formatter)));
+
 
     }
 }
