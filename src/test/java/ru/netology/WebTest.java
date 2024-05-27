@@ -30,11 +30,13 @@ public class WebTest {
         $("[data-test-id='name'] input").setValue("Елена");
         $("[data-test-id='phone'] input").setValue("+77772100609");
         $("[data-test-id=agreement]").click();
-        $$("button").find(exactText("Забронировать")).click();
+        $$("button").find(Condition.exactText("Забронировать")).click();
         //$$("button").find(exactText("Забронировать")).shouldBe(Condition.visible, Duration.ofSeconds(15));
-        $(".button__icon").shouldBe(Condition.visible, Duration.ofSeconds(15));
-        $("[data-test-id='notification']").shouldHave(exactText("Встреча успешно забронирована на " + futureDate.format(formatter)));
-
+        //$(".button__icon").shouldBe(Condition.visible, Duration.ofSeconds(15));
+        //$("[data-test-id='notification']").shouldHave(exactText("Встреча успешно забронирована на " + futureDate.format(formatter)));
+        $(".notification__content")
+                .shouldBe(Condition.visible, Duration.ofSeconds(15))
+                .shouldHave(Condition.exactText("Встреча успешно забронирована на " + futureDate.format(formatter)));
 
     }
 }
