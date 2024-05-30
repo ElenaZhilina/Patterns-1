@@ -30,23 +30,32 @@ class WebTest {
     @DisplayName("Plan&Replan")
     void PlanReplan() {
 
-        var city = DataGenerator.generateCity("ru");
-        var name = DataGenerator.generateName("ru");
-        var phone = DataGenerator.generatePhone("ru");
+        var newUser = DataGenerator.Registration.generateUser("ru");
+        var daysAddForFirstMeet = 3;
+        var firstMeetDate = DataGenerator.generateDate(daysAddForFirstMeet);
+        var daysAddForSecondMeet = 3;
+        var secondMeetDate = DataGenerator.generateDate(daysAddForSecondMeet);
 
-        $("[data-test-id='city'] input").setValue(city);
-        $("[data-test-id='name'] input").setValue(name);
-        $("[data-test-id='phone'] input").setValue(phone);
-
-            Meeting firstMeeting = new Meeting();
-        LocalDate firstMiting = LocalDate.now().plusDays(int daysToAddForFirstMeeting);
-
-        firstMeeting.equals(firstMeeting);
-        firstMeeting.setUser(validUser);
-
-            Meeting secondMeeting = new Meeting();
-        secondMeeting.setDate(secondMeetingDate);
-        secondMeeting.setUser(validUser);
+        $("[data-test-id='city'] input").setValue(newUser.getCity());
+        $("[data-test-id='date'] input").sendKeys(Keys.SHIFT, Keys.HOME, Keys.DELETE);
+        $("[data-test-id='date'] input").sendKeys(firstMeetDate);
+        $("[data-test-id='name'] input").setValue(newUser.getName());
+        $("[data-test-id='phone'] input").setValue(newUser.getPhone());
+        $("[data-test-id=agreement]").click();
+        $$("button").find(Condition.exactText("Запланировать")).click();
+        $(".notification__content")
+                .shouldBe(Condition.visible, Duration.ofSeconds(15))
+                .shouldHave(Condition.exactText("Встреча успешно забронирована на " + firstMeetDate.format(formatter)));
+        $("[data-test-id='date'] input").sendKeys(Keys.SHIFT, Keys.HOME, Keys.DELETE);
+        $("[data-test-id='date'] input").sendKeys(secondMeetDate);
+        $$("button").find(Condition.exactText("Запланировать")).click();
+        $(".notification__content")
+                .shouldHave(Condition.exactText("У вас уже запланирована встреча на другую дату. Перепланировать?"))
+                .shouldBe(Condition.visible);
+        $$("button").find(Condition.exactText("Перепланировать")).click();
+        $(".notification__content")
+                .shouldHave(Condition.exactText("Встреча успешно забронирована на " + secondMeetDate.format(formatter)))
+                .shouldBe(Condition.visible);
 
     }
         }
@@ -65,9 +74,6 @@ class WebTest {
 
 
 
-            $("[data-test-id=agreement]").
-
-            click();
 
             $$("button").
 
@@ -86,7 +92,6 @@ class WebTest {
 
         $("[data-test-id='date'] input").sendKeys(Keys.SHIFT, Keys.HOME, Keys.DELETE);
 
-        $("[data-test-id='date'] input").sendKeys(futureDate.format(formatter));
 
         $("[data-test-id='name'] input").sendKeys(Keys.SHIFT, Keys.HOME, Keys.DELETE);
 
@@ -104,11 +109,6 @@ class WebTest {
 
                 click();
 
-        $$("button").
-
-                find(Condition.exactText("Забронировать")).
-
-                click();
 
         $(".notification__content").
 
