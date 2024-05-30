@@ -1,21 +1,15 @@
 package ru.netology;
 
 import com.codeborne.selenide.Condition;
-import com.github.javafaker.Faker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.Keys;
 
 import java.time.Duration;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 
+import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.*;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 
 
 class WebTest {
@@ -27,13 +21,13 @@ class WebTest {
 
 
     @Test
-    @DisplayName("Plan&Replan")
+    @DisplayName("PlanReplan")
     void PlanReplan() {
 
         var newUser = DataGenerator.Registration.generateUser("ru");
         var daysAddForFirstMeet = 3;
         var firstMeetDate = DataGenerator.generateDate(daysAddForFirstMeet);
-        var daysAddForSecondMeet = 3;
+        var daysAddForSecondMeet = 5;
         var secondMeetDate = DataGenerator.generateDate(daysAddForSecondMeet);
 
         $("[data-test-id='city'] input").setValue(newUser.getCity());
@@ -42,83 +36,23 @@ class WebTest {
         $("[data-test-id='name'] input").setValue(newUser.getName());
         $("[data-test-id='phone'] input").setValue(newUser.getPhone());
         $("[data-test-id=agreement]").click();
-        $$("button").find(Condition.exactText("Запланировать")).click();
+        $$(".button__content").find(Condition.exactText("Запланировать")).click();
         $(".notification__content")
                 .shouldBe(Condition.visible, Duration.ofSeconds(15))
-                .shouldHave(Condition.exactText("Встреча успешно забронирована на " + firstMeetDate.format(formatter)));
+                .shouldHave(Condition.exactText("Встреча успешно запланирована на " + firstMeetDate));
+
         $("[data-test-id='date'] input").sendKeys(Keys.SHIFT, Keys.HOME, Keys.DELETE);
         $("[data-test-id='date'] input").sendKeys(secondMeetDate);
-        $$("button").find(Condition.exactText("Запланировать")).click();
-        $(".notification__content")
-                .shouldHave(Condition.exactText("У вас уже запланирована встреча на другую дату. Перепланировать?"))
+        $$(".button__content").find(Condition.exactText("Запланировать")).click();
+        $("[data-test-id=replan-notification] .notification__content")
+                .shouldHave(text("У вас уже запланирована встреча на другую дату. Перепланировать?"))
                 .shouldBe(Condition.visible);
-        $$("button").find(Condition.exactText("Перепланировать")).click();
-        $(".notification__content")
-                .shouldHave(Condition.exactText("Встреча успешно забронирована на " + secondMeetDate.format(formatter)))
+        $("[data-test-id=replan-notification] button").click();
+        $("[data-test-id=success-notification] .notification__content")
+                .shouldHave(Condition.exactText("Встреча успешно запланирована на " + secondMeetDate))
                 .shouldBe(Condition.visible);
 
     }
-        }
-
-
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-
-            $("[data-test-id='date'] input").
-
-            sendKeys(Keys.SHIFT, Keys.HOME, Keys.DELETE);
-
-            $("[data-test-id='date'] input").
-
-            sendKeys(futureDate.format(formatter));
-
-
-
-
-            $$("button").
-
-            find(Condition.exactText("Забронировать")).
-
-            click();
-
-            $(".notification__content").
-
-            shouldBe(Condition.visible, Duration.ofSeconds(15))
-
-
-        $("[data-test-id='city'] input").sendKeys(Keys.SHIFT, Keys.HOME, Keys.DELETE);
-
-        $("[data-test-id='city'] input").setValue(city);
-
-        $("[data-test-id='date'] input").sendKeys(Keys.SHIFT, Keys.HOME, Keys.DELETE);
-
-
-        $("[data-test-id='name'] input").sendKeys(Keys.SHIFT, Keys.HOME, Keys.DELETE);
-
-        $("[data-test-id='name'] input").setValue(name);
-
-        $("[data-test-id='phone'] input").
-
-                sendKeys(Keys.SHIFT, Keys.HOME, Keys.DELETE);
-
-        $("[data-test-id='phone'] input").
-
-                setValue(phone);
-
-        $("[data-test-id=agreement]").
-
-                click();
-
-
-        $(".notification__content").
-
-                shouldBe(Condition.visible, Duration.ofSeconds(15))
-
-
-    }
-
-    shouldHave(Condition.exactText("Встреча успешно забронирована на "+futureDate.format(formatter)));
-
-
 }
+
 
