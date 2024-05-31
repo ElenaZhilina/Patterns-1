@@ -22,7 +22,7 @@ class WebTest {
 
     @Test
     @DisplayName("PlanReplan")
-    void PlanReplan() {
+    void planReplan() {
 
         var newUser = DataGenerator.Registration.generateUser("ru");
         var daysAddForFirstMeet = 3;
